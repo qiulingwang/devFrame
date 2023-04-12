@@ -1,0 +1,122 @@
+<script setup lang='ts'>
+import { onMounted, ref, watchEffect } from 'vue'
+import { useUserStore } from '@/store'
+import { getToken } from '@/store/modules/auth/helper'
+const emit = defineEmits<Emit>()
+
+const userStore = useUserStore()
+const token = ref('')
+
+interface Emit {
+  (e: 'login'): void
+}
+
+function loginEvent(type: string) {
+  if (type === 'login')
+    emit('login')
+  if (type === 'exit') {
+    localStorage.removeItem('SECRET_TOKEN')
+    location.reload()
+  }
+}
+
+// 重置token
+const resetToken = () => {
+  token.value = getToken() as string
+}
+
+watchEffect(() => {
+  const { user } = userStore.userInfo
+  if (user.email)
+    resetToken()
+})
+
+onMounted(() => {
+  resetToken()
+})
+</script>
+
+<template>
+  <div class="tip-main">
+    <div class="tip-text-content">
+      <p v-if="token">
+        <span class="v-exit" @click="loginEvent('exit')">退出登录</span>
+      </p>
+      <p v-else>
+        <span class="v-login" @click="loginEvent('login')">未登录</span>
+      </p>
+    </div>
+  </div>
+</template>
+
+<style lang="less">
+.tip-main {
+  width: 90%;
+  display: flex;
+  padding: 6px;
+  border-radius: 6px;
+  background-color: #323232;
+  margin: 0 auto;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(.96);
+  }
+
+  &:hover {
+    background-color: #3c4250;
+  }
+}
+
+.v-login {
+  color: #FF6666;
+  text-decoration: underline;
+  cursor: grab;
+  font-size: 12px;
+}
+
+.v-exit {
+  color: #FF6666;
+  text-decoration: underline;
+  cursor: grab;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.number {
+  color: #FF6666;
+  cursor: grab;
+  font-size: 12px;
+}
+
+.notice-swipe {
+  height: 40px;
+  line-height: 40px;
+}
+
+.tip-text-content {
+  font-size: 10px;
+  color: rgba(232, 236, 239, 0.75);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.van-notice-bar {
+  width: 60%;
+  background-color: #111114 !important;
+  color: #fff;
+  text-align: center;
+
+  .van-notice-bar__wrap {
+    display: flex;
+    justify-content: center;
+
+    .van-swipe-item {
+      color: #FF6666;
+      font-size: 10px;
+    }
+  }
+}
+</style>
