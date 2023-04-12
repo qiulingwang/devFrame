@@ -22,7 +22,7 @@ export default defineConfig((env) => {
           rewrite: path => path.replace('/luomacode-api/', '/luomacode-api/'),
         },
         '/api': {
-          target: 'http://chatmoss.aihao123.cn',
+          target: '地址',
           changeOrigin: true, // 允许跨域
           rewrite: path => path.replace('api/', 'api/'),
         },
